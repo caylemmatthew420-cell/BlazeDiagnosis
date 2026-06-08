@@ -2,7 +2,7 @@
 
 Welcome to the Blaze Diagnostics repository.
 
-This file is the first file interns should read before working on the project.
+This file is the first file interns should read before working on the project
 
 ## Project Purpose
 
