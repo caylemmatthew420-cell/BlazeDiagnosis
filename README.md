@@ -115,3 +115,41 @@ The full internship-wide resource list is maintained in the `internship-training
 `13-resource-index/self-paced-resource-urls.md`
 
 ## Summary
+Back end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Front end 
