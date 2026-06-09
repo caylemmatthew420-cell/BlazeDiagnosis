@@ -113,3 +113,5 @@ Blaze Diagnostics learning resources are available at:
 The full internship-wide resource list is maintained in the `internship-training-and-docs` repository under:
 
 `13-resource-index/self-paced-resource-urls.md`
+
+## Summary
