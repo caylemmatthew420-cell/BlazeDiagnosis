@@ -115,44 +115,73 @@ The full internship-wide resource list is maintained in the `internship-training
 `13-resource-index/self-paced-resource-urls.md`
 
 ## Findings
-Back end
+### Back End 
+
+Seed.ts  
+The seed file initializes demo data in a clean, idempotent way using upsert operations. It sets up a tenant, branch, admin user, customer, vehicle, job, and quote so the system has baseline records to work with. This approach ensures consistency across runs and avoids duplication. A natural extension would be to seed parts and part requests, adding fields like name, quantity, price, and reorder level, tied to jobs. Doing so would give the PartsModule realistic data for testing queries, updates, and validations once it is implemented.
+
+App.ts  
+The application file defines how the backend instance is created and configured. The createApp function wires controllers into a lightweight application object, sets up middleware, registers routes, and provides a listen method to simulate starting the server. This scaffold is useful for testing without a full framework like Express. As the system grows, the hardcoded routes should be replaced with dynamically generated ones from each controller, ensuring new modules like PartsController or NotificationsController integrate seamlessly without manual updates.
+
+Auth  
+The authentication module acts as the security gatekeeper, ensuring only valid users can log in and interact with the system. The AuthController manages authentication actions, connecting validators, middleware, and the AuthService. DTOs define input and output contracts, making authentication predictable and secure. The repository handles persistence, bridging services and controllers with the in‑memory database. Routes centralize authentication endpoints, while the AuthService orchestrates workflows like login, logout, token refresh, and password resets. It enforces tenant checks, token lifetimes, and revocation policies, making it the backbone of identity management. Tests simulate login flows and validate token structures, while validators enforce strict schema rules for login, password resets, and token refresh, ensuring only well‑formed data reaches the service layer.
+
+Collection  
+The collection module is currently a scaffold, intended to manage sets of data. The CollectionController will eventually expose CRUD operations, while the DTO defines contracts for collection data. The repository will handle persistence logic, isolating database operations from business rules. Routes will register collection endpoints, and the service will enforce workflows between controller and repository. Tests are scaffolded with a trivial passing case, validators are stubs for schema enforcement, and the index file acts as a barrel export to simplify imports and modularize the module.
+
+Customers  
+The customers module manages customer data across the API and database layer. The CustomersController exposes endpoints for customer management, wrapping the service and validating inputs. DTOs enforce required fields like tenantId, fullName, and mobileNumber, while supporting optional metadata such as email, address, and marketing consent. Entities extend BaseEntity for consistency, adding customer‑specific fields. The repository provides methods for listing, searching, finding, creating, updating, and archiving customers, with duplicate checks and tenant isolation. Routes define endpoints for CRUD operations and soft deletion. The service implements business logic for customer workflows, enforcing uniqueness, tenant boundaries, and audit timestamps. Tests are scaffolded, validators ensure strict input validation for create and update operations, and the index file provides clean imports of controller and service.
+
+Dashboard  
+The dashboard module is responsible for backend logic that powers dashboard views and APIs. The DashboardController will expose endpoints for aggregated data such as customer counts, revenue, and system health. DTOs define structures for KPIs and summaries, ensuring predictable data contracts. The repository will query multiple sources to generate metrics rather than storing its own records. Routes will register dashboard endpoints, while the service will aggregate raw data into actionable insights, transforming it into KPIs and summaries. Tests are scaffolded to validate aggregation and tenant isolation, validators will enforce schema rules for dashboard inputs, and the index file provides a clean entry point for controller and service exports.
+
+Inspections  
+The inspections module manages inspection records, rules, and workflows. The InspectionsController will define CRUD endpoints for inspections, validating payloads and delegating logic to the service. DTOs will define inspection data contracts, including identifiers, dates, statuses, and inspector details. The repository will handle persistence, managing CRUD operations for inspection records. Routes will register inspection endpoints, while the service will enforce workflows like status updates, scheduling, and linking inspections to customers or assets. Tests are scaffolded to validate inspection workflows, validators will enforce schema rules for inspection payloads, and the index file provides modular exports.
+
+Invoices  
+The invoices module handles invoice management, including data, rules, and API endpoints. The InvoicesController will expose CRUD operations for invoices, validating requests and delegating logic to the service. DTOs will define invoice data contracts, including identifiers, customer details, financial fields, and status indicators. The repository will manage persistence, enforcing tenant isolation and preventing duplicate invoice numbers. Routes will register invoice endpoints, while the service will enforce workflows such as invoice creation, lifecycle management, reporting, and notifications. Tests are scaffolded to validate invoice workflows, ensuring the module evolves into a reliable backbone for financial operations.
+
+Payments:  This module provides the foundation for handling payment processing and record management. It currently defines the basic building blocks but leaves detailed implementation for later. The PaymentsController will eventually manage incoming HTTP requests related to payments, while the PaymentsDto interface outlines the structure of payment data such as amount, currency, and user ID. The PaymentsRepository will handle persistence by interacting with the database to store and retrieve records. At present, paymentsRoutes is empty but will later map URLs to controller methods. The PaymentsService will contain business logic like validating transactions or applying discounts before saving them. A placeholder test suite is included, along with a stubbed validatePaymentsInput function for schema validation. Finally, re‑exports make the controller and service accessible throughout the project.
+
+Quotes:  
+This module manages business quotes and estimates, with a complete structure in place. The QuotesController provides methods to list quotes by job, create new ones, mark them as sent, and handle public approval or rejection via tokens. Business logic resides in the QuotesService, which calculates s
+ubtotals, discounts, taxes, and totals, generates unique IDs and tokens, and updates statuses. Persistence is handled by the QuotesRepository, which stores and retrieves quotes and line items in memory. Data structures are defined through QuoteLineDto, CreateQuoteDto, and QuoteEntity. Validators such as validateCreateQuoteInput enforce proper formatting of incoming data. Routes connect API endpoints to controller methods, while a scaffolded test suite ensures the module can be tested. Re‑exports make the controller and service available elsewhere in the system.
+
+Suppliers:  
+The suppliers module is currently a scaffold, intended to manage supplier information such as names, contact details, and product categories. The SuppliersController will eventually handle HTTP requests, while the SuppliersDto defines the structure of supplier data. The SuppliersRepository will manage persistence, storing and updating supplier records. Routes are empty for now but will later map endpoints to controller methods. The SuppliersService will implement business logic, including validation and relationship management. A placeholder test suite and validation stub are included, with re‑exports ensuring easy integration.
+
+Tenants:  
+This module manages tenant data, including structure, persistence, and endpoints. The TenantsController exposes methods to list tenants, fetch by ID, create new tenants, and update existing ones. The TenantsService enforces business rules such as unique slugs, default settings (timezone, currency, tax rate), and merging updates with existing configurations. The TenantsRepository handles persistence in memory, supporting listing, finding, creating, and updating records. DTOs and entities define tenant data, while validators enforce correctness, ensuring required fields, valid emails, and restricted tenant types. Routes map endpoints to permissions, enforcing access control. A placeholder test suite is included, and re‑exports make the controller and service accessible.
+
+Users:  
+The users module is the backbone of authentication, authorization, and user data management. The UsersController provides endpoints to list, fetch, create, and update users. The UsersService enforces business rules such as tenant validation, duplicate email prevention, secure password hashing, and managing statuses (INVITED, ACTIVE, SUSPENDED). The UsersRepository persists user records in memory. DTOs and entities define user data, including names, roles, preferences, and audit timestamps. Validators enforce strict input correctness, ensuring roles and statuses are valid and passwords meet minimum requirements. The toPublicUser utility strips sensitive fields before returning data. Routes enforce permissions, while a scaffolded test suite ensures testability. Re‑exports make the module accessible across the project.
+
+Vehicles:  
+This module manages vehicle records and their links to customers, jobs, or inspections. The VehiclesController exposes endpoints to list, fetch, create, update, and archive vehicles. The VehiclesService enforces rules such as preventing duplicates (registration number or VIN), validating tenant ownership, and managing archival. The VehiclesRepository handles persistence, providing search, create, update, and archive functions. DTOs and entities define vehicle data, including registration, VIN, make, model, year, engine type, fuel type, transmission, odometer, and color. Validators enforce schema correctness. Routes expose RESTful APIs, while a scaffolded test suite ensures testability. Re‑exports make the controller and service available elsewhere.
+
+Shared:  
+This module provides common utilities for authentication, authorization, and data management. It includes password hashing with scrypt, constant‑time verification, role‑based permissions, and token handling with HMAC SHA‑256. The AuthContext defines authenticated user identity, tenant, role, and permissions. Functions like requireAuth, requirePermission, and requireAnyPermission enforce access control, while tenant scope utilities prevent cross‑tenant access. Domain constants such as JOB_STATUSES and DomainEvent define workflow states. An in‑memory database is seeded with demo data, including tenants, users, customers, vehicles, jobs, and quotes. Utility functions generate IDs, timestamps, and tokens, while validation helpers enforce data correctness. Response helpers standardize API outputs, and the app bootstrap starts the server with controllers logged.
+
+Type:  
+This module centralizes reusable type definitions for consistency across the backend. It declares Node.js global objects and crypto APIs, including process.env, Buffer, and functions like createHmac, randomBytes, scryptSync, and timingSafeEqual. These declarations provide type safety without implementing functionality, ensuring TypeScript can validate usage of Node.js features.
+
+Server:  
+The server file is the main entry point of the backend. It imports createApp, configures the application, and starts listening on a port defined by the environment variable PORT or defaults to 4000. Once running, it logs confirmation messages showing the port and available controllers, ensuring developers know the server is active and which modules are wired in.
+
+.env:  
+This configuration file defines runtime settings for the backend. It specifies the server port, frontend base URL, database and Redis connections, and JWT secrets for access, refresh, and reset tokens. It also defines token lifetimes: access tokens last 15 minutes, refresh tokens last 7 days, and reset tokens expire after 30 minutes. These variables ensure secure communication, persistence, caching, and authentication.
+
+Package-lock.json:  
+This auto‑generated file ensures consistent dependency management. It captures project metadata such as name, version, and lockfile format, and records installed packages. In this case, only the root package is defined, meaning no external dependencies have been installed yet. It guarantees reproducibility across environments.
+
+Package.json:  
+This minimal setup reflects the project’s identity and dependency state. It defines the project name and version but currently lists no external packages. It ensures reproducibility once dependencies are added.
+
+Tsconfig.json:  
+This configuration file defines TypeScript compiler rules. It targets ES2021, uses CommonJS modules, compiles from src to dist, enforces strict type checking, supports ES module interop, and skips library checks for faster compilation. It includes .ts and .d.ts files while excluding test files. This ensures consistent compilation into modern JavaScript with strong type guarantees.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Front end 
+### Front End 
 
 CSS/Tailwind CSS
 
