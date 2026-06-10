@@ -25,3 +25,5 @@ Same pattern as `inspectionsApi` and `notificationsApi` — an empty placeholder
 
 Frontend tsconfig.json problem can be fixed we choose to fix the frontend problem.
 Problem with tailwind.config.ts in the frontend of the app.
+"moduleResolution": "node", this code needs to be updated to the newer version for it to work.
+To run the code and start the next.js you need to use the npm run dev funtion.
