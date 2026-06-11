@@ -27,3 +27,28 @@ Frontend tsconfig.json problem can be fixed we choose to fix the frontend proble
 Problem with tailwind.config.ts in the frontend of the app.
 "moduleResolution": "node", this code needs to be updated to the newer version for it to work.
 To run the code and start the next.js you need to use the npm run dev funtion.
+
+## Reviewed Folders Of Other Students
+
+'entity-relationship-notes.md' The entity folder contains the different entities such as the Customer ,VehicleJob, Card Quote, Invoice,Parts Order, Notification and Service Advisors.
+
+'security.md' The folder contains other findings and questions about authentication and session management it also contains confirmation that meta data is up to date and prepared.
+
+'SecurityChecklist.md The folder contains Error message safety and it is incomplete as the findings heading is still empty.
+
+'Week 2 day 1 documentaion.pdf' The document contains pdf meterial it is unreadable and does not open as it gives an error trying to open the document in github.
+
+## Software Development year 1 team 0.01
+Front-end and back-end summary
+Folder structure reviews 
+Code and problem reviews 
+Identified issues on code 
+Empty folders reported 
+Documented findings 
+Reviewed other students documentation
+Clarity and formatting issues fixed in Security.md
+Updated global.css code for tailwind.css
+
+
+
+
